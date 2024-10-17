@@ -52,8 +52,12 @@ d3.csv("data/sportData.csv", function(data) {
     }
 });
 
-d3.csv("data/sportData.csv", function(data) {
-    console.log(data[0].Achternaam);
+// d3.csv("data/sportData.csv", function(data) {
+//     console.log(data);
+// });
+
+d3.dsv(";", "data/sportData.csv", function(data) {
+    console.log(data);
 });
 
 
