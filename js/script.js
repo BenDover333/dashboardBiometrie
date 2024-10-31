@@ -96,7 +96,7 @@ d3.select("body")
 
 var margin = { top: 70, right: 30, bottom: 60, left: 50 },
     width = 800 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    height = 800 - margin.top - margin.bottom;
 
 var svg = d3.select(".hartslagGrafiek")
     .append("svg")
@@ -288,6 +288,37 @@ Promise.all([
 
     console.log("Tijd in zones:", timeInMinutes);
 });
+
+
+// var mountain = d3.select("body")
+//     .append("svg")
+//     .attr("width", 800)
+//     .attr("height", 800)
+//     .style("background-color", "#FFFFFF")
+
+// mountain.append("rect")
+//     .attr("x", 0)
+//     .attr("y", 0)
+//     .attr("width", 800)
+//     .attr("height", 800)
+//     .attr("fill", "#87CEEB")
+
+// door dit aan te passen naar svg inplaats van mountain kan je de berg en sneeuw als achtergrond gebruiken voor de grafiek.
+// voor betere zichtbaarheid is het verstandig om de grafiek de zelfde afmetingen te geven als de berg.
+svg.append("polygon") // berg 
+    .attr("points", "400,000 000,800 800,800")
+    .attr("fill", "#8B4513")
+
+svg.append("polygon") // sneeuw 1
+    .attr("points", "400,0 200,400 350,300 400,400") // top, links, midden, rechts
+    .attr("fill", "#ffffff")
+
+svg.append("polygon") // sneeuw 2
+    .attr("points", "400,0 600,400 450,300 400,400") // top, links, midden, rechts
+    .attr("fill", "#ffffff")
+
+
+
 
 
 
