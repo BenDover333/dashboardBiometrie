@@ -278,7 +278,7 @@ Promise.all([
         }
 
         if (zone && timeInZones[zone] !== undefined) {
-            timeInZones[zone] += tijdInSeconden;
+            timeInZones[zone] += 5; // omdat er stapjes worden genomen van 5 seconden
         }
     });
     let timeInMinutes = {};
