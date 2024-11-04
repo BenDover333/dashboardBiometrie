@@ -1,10 +1,8 @@
 import pandas as pd
 import numpy as np
 
-# Tijd genereren van 00:00 tot 20:00 met een interval van 5 minuten
-time = pd.date_range(start='2024-10-31 00:00', end='2024-10-31 20:00', freq='5T')
+time = pd.date_range(start='2024-10-31 00:00', end='2024-10-31 20:00', freq='5s')
 
-# Dummydata genereren
 data = {
     't (s)': (time - time[0]).seconds,
     'Rf (1/min)': np.random.uniform(10, 30, size=len(time)),
@@ -76,6 +74,11 @@ data = {
 }
 
 df = pd.DataFrame(data)
+def seconds_to_hhmm(seconds):
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    return f"{hours:02}:{minutes:02}"
 
-# Opslaan van de DataFrame naar een CSV-bestand
-df.to_csv('dummydata.csv', index=False)
+df['t (s)'] = df['t (s)'].apply(seconds_to_hhmm)
+
+df.to_csv('dummydata6.csv', index=False)
