@@ -1,10 +1,52 @@
 d3.select("body")
     .append("div")
+    .attr("class", "background")
+
+d3.select(".background")
+    .append("img")
+    .attr("src", "svg/22379948_6558737.svg")
+    .style("position", "fixed")
+    .style("opacity", 0.1)
+
+d3.select("body")
+    .append("div")
+    .attr("class", "logo")
+
+d3.select(".logo")
+    .append("img")
+    .attr("src", "img/Logo-Mens-en-Techniek-Biometrie-2.png")
+    .style("width", "200px")
+    .style("height", "auto")
+    .style("position", "absolute")
+    .style("margin", "20px")
+    .style("top", "10px")
+    .style("right", "10px")
+
+d3.select("body")
+    .append("div")
     .attr("class", "sporterGegevens")
 
 d3.select(".sporterGegevens")
     .append("p-text")
     .text("test")
+
+d3.select("body")
+    .append("div")
+    .attr("id", "tooltip")
+
+d3.select("#tooltip")
+    .style("position", "absolute")
+    .style("background-color", "white")
+    .style("border", "1px solid black")
+    .style("padding", "5px")
+    .style("opacity", 0)
+    .style("pointer-events", "none")
+    .style("font-size", "16px")
+    .style("font-family", "Arial")
+    .style("border-radius", "5px")
+    .style("transition", "opacity 0.3s")
+
+
 
 d3.dsv(";", "data/Sporter.csv").then(function(data) {
     var container = d3.select(".sporterGegevens")
@@ -106,7 +148,21 @@ var svg = d3.select(".hartslagGrafiek")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.dsv(";", "data/sportData.csv").then(function(data) {
+function getDataFile() {
+    if (currentIndex === 0) {
+        return "data/sportData.csv";
+    } else if (currentIndex === -1) {
+        return "data/dummydata4.csv";
+    } else {
+        console.warn("Onngeldige index voor datset:", currentIndex);
+        return null;
+    }
+}
+
+function loadHeartRateData() {
+
+    const dataFile = getDataFile();
+    d3.dsv(";", dataFile).then(function(data) {
         data.forEach(function(d) {
             d.HR = d.HR ? +d.HR : 0;
             d["t (s)"] = d3.timeParse("%M:%S")(d["t (s)"]);
@@ -138,6 +194,8 @@ var svg = d3.select(".hartslagGrafiek")
         .style("font-size", "16px")
         .style("color", "white");
 
+    const tooltip = d3.select("#tooltip");
+    
     // Definieer de lijn
     var line = d3.line()
         .x(function(d) { return x(d["t (s)"]); })
@@ -150,7 +208,24 @@ var svg = d3.select(".hartslagGrafiek")
         .attr("d", line)
         .attr("fill", "none")
         .attr("stroke", "red")
-        .attr("stroke-width", 3);
+        .attr("stroke-width", 3)
+        .on("mouseover", function(event, d) {
+             tooltip.style("opacity", 1); 
+            })
+            .on("mousemove", function(event, d) {
+                const [xPos2, yPos2] = d3.pointer(event);
+
+                const closestDataPoint = data.reduce((prev, curr) => 
+                        Math.abs(x(curr["t (s)"]) - xPos2) < Math.abs(x(prev["t (s)"]) - xPos2) ? curr : prev
+                );
+
+                tooltip.html(`Hartslag: ${closestDataPoint.HR} bpm <br>Tijd: ${d3.timeFormat("%M:%S")(closestDataPoint["t (s)"])}`)
+                .style("left", (event.pageX + 20) + "px")
+                .style("top", (event.pageY - 20) + "px");
+            })
+            .on("mouseout", function(event, d) {
+                tooltip.style("opacity", 0);
+            });
         
     // Bepaal de positie van het laatste punt op de lijn
     let lastDataPoint = data[data.length - 1];
@@ -187,16 +262,20 @@ svg.append("path")
         .attr("y", 0 - (margin.top / 2))
         .attr("text-anchor", "middle")  
         .style("font-size", "36px")
-        .style("fill", "white")
+        .style("fill", "#e97025")
         .style("font-family", "Monoton")
-        .style("text-decoration", "underline") 
-        .text("Hartslag tijdens de test");
+        .style("text-decoration", "underline")
+        .text("_Hartslag_tijdens_ de_ test_");
 
     
 
 }).catch(function(error) {
     console.error('Error loading the CSV file:', error);
-});
+})
+};
+
+loadHeartRateData();
+
 
 let heartRate = 80;
 let age = 30;
@@ -317,13 +396,6 @@ svg.append("polygon") // sneeuw 2
     .attr("points", "400,0 600,400 450,300 400,400") // top, links, midden, rechts
     .attr("fill", "#ffffff")
 
-
-
-
-
-
-
-// // Laad de CSV-data met D3
 // d3.dsv(";", "data/sportData.csv").then(function(data) {
 //     // Voorbereiding
 //     let timeInZones = {
