@@ -8,9 +8,71 @@ p-text {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.sporterGegevens {
-    color: #e97025;
-    font-size: 20px;
-    font-family: Arial, Helvetica, sans-serif;
+
+.grafieken-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
 }
+
+.hartslagGrafiek {
+    max-height: 100%;
+    width: auto;
+    grid-column: span 1;
+    
+}
+
+.belangrijkste-waarden-per-fase {
+    height: auto;
+    width: auto;
+    grid-column: span 1;
+}
+
+.hartslag-zones {
+    height: auto;
+    width: auto;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    
+}
+
+.hartslag-zones-uitleg {
+    height: 50%;
+    width: 90%;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    background-color: #3c5c79;
+    text-align: center;
+}
+
+.header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #2e4b64;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.logo-container img {
+    width: 150px;
+    height: auto;
+}
+
+.sporter-gegevens {
+    font-size: 16px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    
+}
+
+
 

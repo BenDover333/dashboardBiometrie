@@ -19,15 +19,27 @@ function drawGraph() {
 function createDoubleYAxisChart(data) {
     const width = 800;
     const height = 400;
-    const margin = { top: 40, right: 80, bottom: 50, left: 90 };
+    const margin = { top: 70, right: 60, bottom: 30, left: 60 };
 
-    const svg = d3.select("body").append("svg")
+    const svg = d3.select(".grafieken-container")
+        .append("svg")
+        .attr("class", "belangrijkste-waarden-per-fase")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
+        .style("background-color", "#3c5c79")
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // X- en Y-schalen
+        svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "36px")
+        .style("fill", "#e97025")
+        .style("font-family", "Monoton")
+        .style("text-decoration", "underline")
+        .text("Belangrijkste_waarden_per_fase");
+
     const x = d3.scaleBand()
         .domain(data.map(d => d.fase))
         .range([0, width])
@@ -41,36 +53,43 @@ function createDoubleYAxisChart(data) {
         .domain([0, d3.max(data, d => Math.max(d.gemiddeldeHR, d.gemiddeldeVE)) * 1.1])
         .range([height, 0]);
 
-    // Berg tekenen als achtergrond
     drawBerg(data, svg, x, yLeft, height);
 
-    // X- en Y-assen
     svg.append("g")
         .attr("transform", `translate(0,${height})`)
+        .attr("color", "white")
+        .style("font-size", "14px")
         .call(d3.axisBottom(x));
 
     svg.append("g")
         .call(d3.axisLeft(yLeft))
+        .attr("color", "white")
+        .style("font-size", "14px")
         .append("text")
-        .attr("fill", "black")
+        .attr("fill", "white")
         .attr("x", -30)
         .attr("y", -10)
         .attr("dy", "0.71em")
-        .attr("text-anchor", "end")
+        .attr("text-anchor", "start")
+        .attr("font-size", "16px")
+        .attr("font-weight", "bolder")
         .text("VO2 / VCO2");
 
     svg.append("g")
         .attr("transform", `translate(${width},0)`)
+        .attr("color", "white")
+        .style("font-size", "14px")
         .call(d3.axisRight(yRight))
         .append("text")
-        .attr("fill", "black")
+        .attr("fill", "white")
         .attr("x", 40)
         .attr("y", -10)
         .attr("dy", "0.71em")
         .attr("text-anchor", "end")
+        .attr("font-size", "16px")
+        .attr("font-weight", "bolder")
         .text("HR / VE");
 
-    // Lijnen voor VO2, VCO2, HR en VE
     const line = d3.line()
         .x(d => x(d.fase) + x.bandwidth() / 2);
 
@@ -102,9 +121,8 @@ function createDoubleYAxisChart(data) {
         .attr("stroke-width", 2)
         .attr("d", line.y(d => yRight(d.gemiddeldeVE)));
 
-    // Legenda
     const legend = svg.append("g")
-        .attr("transform", `translate(${width + 40},20)`);
+        .attr("transform", `translate(${width/5},70)`);
 
     const labels = [
         { color: "steelblue", text: "VO2" },
@@ -125,7 +143,8 @@ function createDoubleYAxisChart(data) {
             .attr("y", i * 20)
             .attr("dy", "0.35em")
             .text(label.text)
-            .style("font-size", "12px");
+            .style("font-size", "12px")
+            .style("fill", "white");
     });
 }
 
@@ -208,7 +227,7 @@ function berekenGemiddeldenPerFase(data) {
         gemiddeldeVO2: d3.mean(waarden, d => d.VO2),
         gemiddeldeVCO2: d3.mean(waarden, d => d.VCO2)
     }));
+    
 }
 
-// Start grafiektekenen
 drawGraph();

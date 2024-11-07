@@ -10,25 +10,59 @@ d3.select(".background")
 
 d3.select("body")
     .append("div")
-    .attr("class", "logo")
+    .attr("class", "header-bar")
+    .style("position", "sticky")
+    .style("top", "0")
+    .style("width", "100%")
+    .style("height", "100px")
+    .style("background-color", "#2e4b64")
+    .style("z-index", "10");
 
-d3.select(".logo")
+
+d3.select(".header-bar")
+    .append("div")
+    .attr("class", "sporter-container")
+    .style("display", "flex") 
+    .style("justify-content", "space-between") 
+    .style("align-items", "center"); 
+
+d3.select(".sporter-container")
+    .append("div")
+    .attr("class", "sporterGegevens")
+    .style("font-family", "Arial")
+    .style("color", "#e97025")
+    .style("font-size", "20px")
+    .style("flex", "1");
+
+d3.select(".sporter-container")
+    .append("div")
+    .attr("class", "sporterGegevens2")
+    .style("font-family", "Arial")
+    .style("color", "#e97025")
+    .style("font-size", "20px")
+    .style("flex", "1")
+    .style("margin-left", "20px"); 
+
+
+d3.select(".header-bar")
+    .append("div")
+    .attr("class", "logo-container")
+    .style("align-items", "center");
+
+d3.select("header-bar")
+    .append("div")
+    .attr("class", "titel")
+    .text("Op weg naar de top")
+
+d3.select(".logo-container")
     .append("img")
     .attr("src", "img/Logo-Mens-en-Techniek-Biometrie-2.png")
     .style("width", "200px")
     .style("height", "auto")
-    .style("position", "absolute")
-    .style("margin", "20px")
-    .style("top", "10px")
-    .style("right", "10px")
+    .style("margin-right", "100px");
 
-d3.select("body")
-    .append("div")
-    .attr("class", "sporterGegevens")
 
-d3.select(".sporterGegevens")
-    .append("p-text")
-    .text("test")
+
 
 d3.select("body")
     .append("div")
@@ -46,27 +80,41 @@ d3.select("#tooltip")
     .style("border-radius", "5px")
     .style("transition", "opacity 0.3s")
 
+d3.select("body")
+    .append("div")
+    .attr("class", "graphs")
+
+d3.select(".graphs")
+    .append("div")
+    .attr("class", "grafieken-container")
 
 
-d3.dsv(";", "data/Sporter.csv").then(function(data) {
+
+
+d3.dsv(";", "data/Sporter.csv").then(function (data) {
     var container = d3.select(".sporterGegevens")
+    var container2 = d3.select(".sporterGegevens2")
 
-    data.forEach(function(row) {
+    data.forEach(function (row) {
         container.append("p")
             .html(`Voornaam: ${row.Voornaam}
                 <br>Achternaam: ${row.Achternaam}
                 <br>Leeftijd: ${row.Leeftijd}
-                <br>Geslacht: ${row.Geslacht}
-                <br>Lengte (cm): ${row["Lengte (cm)"]}
-                <br>Gewicht (kg): ${row["Gewicht (kg)"]}
-                <br>Testdatum: ${row["Test datum"]}`)
+                <br>Geslacht: ${row.Geslacht}`)
+    });
+    data.forEach(function (d) {
+        container2.append("p")
+            .html(`
+                <br>Lengte (cm): ${d["Lengte (cm)"]}
+                <br>Gewicht (kg): ${d["Gewicht (kg)"]}
+                <br>Testdatum: ${d["Test datum"]}`)
     });
 });
 
 async function loadSportData() {
-    d3.dsv(";", "data/sportData.csv").then(function(data) {
+    d3.dsv(";", "data/sportData.csv").then(function (data) {
         console.log("Test om te kijken of de data correct laad.");
-        data.forEach(function(d) {
+        data.forEach(function (d) {
             console.log(d.HR);
             console.log(d["t (s)"]);
         });
@@ -74,65 +122,65 @@ async function loadSportData() {
 };
 
 let datasets = [];
-    let currentIndex = 0;
-    
-    Promise.all([
-        d3.dsv(";", "data/Sporter.csv"),
-        d3.dsv(";", "data/Sporter2.csv"),
-        //d3.dsv(";", "data/Sporter3.csv")
-    ]).then(function(results) {
-        datasets = results;
-        loadData(currentIndex);
-    }).catch(function(error) {
-        console.error('Error loading CSV files:', error);
-    });
-    
-    function loadData(index) {
-        const data = datasets[index];
-        const container = d3.select(".sporterGegevens");
-        container.html("");
-    
-        data.forEach(function(row) {
-            container.append("p")
-                .html(`Voornaam: ${row.Voornaam}
-                       <br>Achternaam: ${row.Achternaam}
-                       <br>Leeftijd: ${row.Leeftijd}
-                       <br>Geslacht: ${row.Geslacht}
-                       <br>Lengte (cm): ${row["Lengte (cm)"]}
-                       <br>Gewicht (kg): ${row["Gewicht (kg)"]}
-                       <br>Testdatum: ${row["Test datum"]}`);
-        });
-    }
-    
-    d3.select("body")
-        .append("button")
-        .attr("id", "vorigeMeting")
-        .text("Vorige meting");
-    
-    d3.select("body")
-        .append("button")
-        .attr("id", "volgendeMeting")
-        .text("Volgende meting");
-    
-    d3.select("#vorigeMeting").on("click", function() {
-        if (currentIndex < datasets.length - 1) {
-            currentIndex++; 
-            loadData(currentIndex);
-        } else {
-            alert("Er zijn geen eerdere metingen beschikbaar.");
-        }
-    });
-    
-    d3.select("#volgendeMeting").on("click", function() {
-        if (currentIndex > 0) {
-            currentIndex--; 
-            loadData(currentIndex);
-        } else {
-            alert("Er zijn geen verdere metingen beschikbaar.");
-        }
-    });
+let currentIndex = 0;
+
+Promise.all([
+    d3.dsv(";", "data/Sporter.csv"),
+    d3.dsv(";", "data/Sporter2.csv"),
+    //d3.dsv(";", "data/Sporter3.csv")
+]).then(function (results) {
+    datasets = results;
+    loadData(currentIndex);
+}).catch(function (error) {
+    console.error('Error loading CSV files:', error);
+});
+
+// function loadData(index) {
+//     const data = datasets[index];
+//     const container = d3.select(".sporterGegevens");
+//     container.html("");
+
+//     data.forEach(function (row) {
+//         container.append("p")
+//             .html(`Voornaam: ${row.Voornaam}
+//                        <br>Achternaam: ${row.Achternaam}
+//                        <br>Leeftijd: ${row.Leeftijd}
+//                        <br>Geslacht: ${row.Geslacht}
+//                        <br>Lengte (cm): ${row["Lengte (cm)"]}
+//                        <br>Gewicht (kg): ${row["Gewicht (kg)"]}
+//                        <br>Testdatum: ${row["Test datum"]}`);
+//     });
+// }
 
 d3.select("body")
+    .append("button")
+    .attr("id", "vorigeMeting")
+    .text("Vorige meting");
+
+d3.select("body")
+    .append("button")
+    .attr("id", "volgendeMeting")
+    .text("Volgende meting");
+
+d3.select("#vorigeMeting").on("click", function () {
+    if (currentIndex < datasets.length - 1) {
+        currentIndex++;
+        loadData(currentIndex);
+    } else {
+        alert("Er zijn geen eerdere metingen beschikbaar.");
+    }
+});
+
+d3.select("#volgendeMeting").on("click", function () {
+    if (currentIndex > 0) {
+        currentIndex--;
+        loadData(currentIndex);
+    } else {
+        alert("Er zijn geen verdere metingen beschikbaar.");
+    }
+});
+
+d3.select(".grafieken-conatiner")
     .append("div")
     .attr("class", "hartslagGrafiek")
 
@@ -140,8 +188,9 @@ var margin = { top: 70, right: 30, bottom: 60, left: 50 },
     width = 800 - margin.left - margin.right,
     height = 800 - margin.top - margin.bottom;
 
-var svg = d3.select(".hartslagGrafiek")
+var hartslagGrafiek = d3.select(".grafieken-container")
     .append("svg")
+    .attr("class", "hartslagGrafiek")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .style("background-color", "#3c5c79")
@@ -162,116 +211,108 @@ function getDataFile() {
 function loadHeartRateData() {
 
     const dataFile = getDataFile();
-    d3.dsv(";", dataFile).then(function(data) {
-        data.forEach(function(d) {
+    d3.dsv(";", dataFile).then(function (data) {
+        data.forEach(function (d) {
             d.HR = d.HR ? +d.HR : 0;
             d["t (s)"] = d3.timeParse("%M:%S")(d["t (s)"]);
         });
-    var x = d3.scaleTime()
-        .domain(d3.extent(data, function(d) { return d["t (s)"]; }))
-        .range([0, width]);
+        var x = d3.scaleTime()
+            .domain(d3.extent(data, function (d) { return d["t (s)"]; }))
+            .range([0, width]);
 
-    var y = d3.scaleLinear()
-        .domain([0, d3.max(data, function(d) { return d.HR; })])
-        .range([height, 0]);
+        var y = d3.scaleLinear()
+            .domain([0, d3.max(data, function (d) { return d.HR; })])
+            .range([height, 0]);
 
-    // X-as
-    svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .style("color", "white")
-        .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%M:%S")))
-        .selectAll("text")
-        .style("font-size", "16px")
-        .style("text-anchor", "end")
-        .attr("dx", "-.8em")
-        .attr("dy", ".15em")
-        .attr("transform", "rotate(-65)")
-        .style("fill", "white");
+        hartslagGrafiek.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .style("color", "white")
+            .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%M:%S")))
+            .selectAll("text")
+            .style("font-size", "16px")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-65)")
+            .style("fill", "white");
 
-    // Y-as
-    svg.append("g")
-        .call(d3.axisLeft(y))
-        .style("font-size", "16px")
-        .style("color", "white");
+        hartslagGrafiek.append("g")
+            .call(d3.axisLeft(y))
+            .style("font-size", "16px")
+            .style("color", "white");
 
-    const tooltip = d3.select("#tooltip");
-    
-    // Definieer de lijn
-    var line = d3.line()
-        .x(function(d) { return x(d["t (s)"]); })
-        .y(function(d) { return y(d.HR); });
+        const tooltip = d3.select("#tooltip");
 
-    // Voeg de lijn toe aan de grafiek
-    svg.append("path")
-        .datum(data)
-        .attr("class", "line")
-        .attr("d", line)
-        .attr("fill", "none")
-        .attr("stroke", "red")
-        .attr("stroke-width", 3)
-        .on("mouseover", function(event, d) {
-             tooltip.style("opacity", 1); 
+        var line = d3.line()
+            .x(function (d) { return x(d["t (s)"]); })
+            .y(function (d) { return y(d.HR); });
+
+        hartslagGrafiek.append("path")
+            .datum(data)
+            .attr("class", "line")
+            .attr("d", line)
+            .attr("fill", "none")
+            .attr("stroke", "red")
+            .attr("stroke-width", 3)
+            .on("mouseover", function (event, d) {
+                tooltip.style("opacity", 1);
             })
-            .on("mousemove", function(event, d) {
+            .on("mousemove", function (event, d) {
                 const [xPos2, yPos2] = d3.pointer(event);
 
-                const closestDataPoint = data.reduce((prev, curr) => 
-                        Math.abs(x(curr["t (s)"]) - xPos2) < Math.abs(x(prev["t (s)"]) - xPos2) ? curr : prev
+                const closestDataPoint = data.reduce((prev, curr) =>
+                    Math.abs(x(curr["t (s)"]) - xPos2) < Math.abs(x(prev["t (s)"]) - xPos2) ? curr : prev
                 );
 
                 tooltip.html(`Hartslag: ${closestDataPoint.HR} bpm <br>Tijd: ${d3.timeFormat("%M:%S")(closestDataPoint["t (s)"])}`)
-                .style("left", (event.pageX + 20) + "px")
-                .style("top", (event.pageY - 20) + "px");
+                    .style("left", (event.pageX + 20) + "px")
+                    .style("top", (event.pageY - 20) + "px");
             })
-            .on("mouseout", function(event, d) {
+            .on("mouseout", function (event, d) {
                 tooltip.style("opacity", 0);
             });
-        
-    // Bepaal de positie van het laatste punt op de lijn
-    let lastDataPoint = data[data.length - 1];
-    let xPos = x(lastDataPoint["t (s)"]);
-    let yPos = y(lastDataPoint.HR);
 
-// Voeg het hart-icoon als `path` toe aan het einde van de lijn
-svg.append("path")
-    .attr("d", "M474.655,74.503C449.169,45.72,413.943,29.87,375.467,29.87c-30.225,0-58.5,12.299-81.767,35.566 c-15.522,15.523-28.33,35.26-37.699,57.931c-9.371-22.671-22.177-42.407-37.699-57.931c-23.267-23.267-51.542-35.566-81.767-35.566 c-38.477,0-73.702,15.851-99.188,44.634C13.612,101.305,0,137.911,0,174.936c0,44.458,13.452,88.335,39.981,130.418 c21.009,33.324,50.227,65.585,86.845,95.889c62.046,51.348,123.114,78.995,125.683,80.146c2.203,0.988,4.779,0,6.981,0 c2.57-1.151,63.637-28.798,125.683-80.146c36.618-30.304,65.836-62.565,86.845-95.889C498.548,263.271,512,219.394,512,174.936 C512,137.911,498.388,101.305,474.655,74.503z")
-    .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.05)`) // Plaats en schaal het hart
-    .attr("fill", "#FF6647") // Pas de kleur aan indien nodig
-    .transition()
-    .duration(1000)
-    .ease(d3.easeSin)
-    .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.06)`) // Kloppend effect: inzoomen
-    .transition()
-    .duration(1000)
-    .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.05)`) // Terug naar originele schaal
-    .on("end", function repeat() { // Herhaal de animatie
-        d3.select(this)
+        let lastDataPoint = data[data.length - 1];
+        let xPos = x(lastDataPoint["t (s)"]);
+        let yPos = y(lastDataPoint.HR);
+
+        hartslagGrafiek.append("path")
+            .attr("d", "M474.655,74.503C449.169,45.72,413.943,29.87,375.467,29.87c-30.225,0-58.5,12.299-81.767,35.566 c-15.522,15.523-28.33,35.26-37.699,57.931c-9.371-22.671-22.177-42.407-37.699-57.931c-23.267-23.267-51.542-35.566-81.767-35.566 c-38.477,0-73.702,15.851-99.188,44.634C13.612,101.305,0,137.911,0,174.936c0,44.458,13.452,88.335,39.981,130.418 c21.009,33.324,50.227,65.585,86.845,95.889c62.046,51.348,123.114,78.995,125.683,80.146c2.203,0.988,4.779,0,6.981,0 c2.57-1.151,63.637-28.798,125.683-80.146c36.618-30.304,65.836-62.565,86.845-95.889C498.548,263.271,512,219.394,512,174.936 C512,137.911,498.388,101.305,474.655,74.503z")
+            .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.05)`) // Plaats en schaal het hart
+            .attr("fill", "#FF6647")
             .transition()
             .duration(1000)
-            .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.06)`)
+            .ease(d3.easeSin)
+            .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.06)`) // Kloppend effect: inzoomen
             .transition()
             .duration(1000)
-            .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.05)`)
-            .on("end", repeat);
-    });
+            .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.05)`) // Terug naar originele schaal
+            .on("end", function repeat() { // Herhaal de animatie
+                d3.select(this)
+                    .transition()
+                    .duration(1000)
+                    .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.06)`)
+                    .transition()
+                    .duration(1000)
+                    .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.05)`)
+                    .on("end", repeat);
+            });
+
+        hartslagGrafiek.append("text")
+            .attr("x", (width / 2))
+            .attr("y", 0 - (margin.top / 2))
+            .attr("text-anchor", "middle")
+            .style("font-size", "36px")
+            .style("fill", "#e97025")
+            .style("font-family", "Monoton")
+            .style("text-decoration", "underline")
+            .text("_Hartslag_tijdens_ de_ test_");
 
 
-    // Titel voor de grafiek
-    svg.append("text")
-        .attr("x", (width / 2))             
-        .attr("y", 0 - (margin.top / 2))
-        .attr("text-anchor", "middle")  
-        .style("font-size", "36px")
-        .style("fill", "#e97025")
-        .style("font-family", "Monoton")
-        .style("text-decoration", "underline")
-        .text("_Hartslag_tijdens_ de_ test_");
 
-    
-
-}).catch(function(error) {
-    console.error('Error loading the CSV file:', error);
-})
+    }).catch(function (error) {
+        console.error('Error loading the CSV file:', error);
+    })
 };
 
 loadHeartRateData();
@@ -283,90 +324,7 @@ let maleMax = 220 - age;
 let femaleMax = 226 - age;
 let zone = '';
 
-// Laad beide CSV-bestanden
-Promise.all([
-    d3.dsv(";", "data/sportData.csv"),
-    d3.dsv(";", "data/Sporter.csv")
-]).then(function(files) {
-    let sportData = files[0];
-    let sporterData = files[1];
 
-    // Maak een map van sporter-ID naar sporter-informatie
-    let sporterMap = {};
-    sporterData.forEach(function(d) {
-        sporterMap[d.ID] = {
-            leeftijd: +d.Leeftijd,
-            geslacht: d.Geslacht.trim()
-        };
-    });
-
-    let timeInZones = {
-        'Warming-up/Cooling-down': 0,
-        'Vetverbranding': 0,
-        'Aerobe training': 0,
-        'Anaerobe training': 0,
-        'Maximale inspanning': 0
-    };
-
-    sportData.forEach(function(d) {
-        const sporterID = d.SporterID;
-        const sporter = sporterMap[sporterID];
-
-        if (!sporter) {
-            console.error("Sporter niet gevonden voor ID:", sporterID);
-            return;
-        }
-
-        const leeftijd = sporter.leeftijd;
-        const geslacht = sporter.geslacht;
-        const hartslag = +d.HR;
-
-        const tijd = d["t (s)"];
-        const tijdOnderdelen = tijd.split(':');
-        const tijdInSeconden = (+tijdOnderdelen[0] * 60) + (+tijdOnderdelen[1]);
-        //console.log("Originele tijd:", tijd, "Omgezet naar seconden:", tijdInSeconden);
-
-        if (isNaN(tijdInSeconden)) {
-            console.error("Ongeldige tijdswaarde:", tijd);
-            return;
-        }
-
-        let maxHartslag;
-        if (geslacht === "Man") {
-            maxHartslag = 220 - leeftijd;
-        } else if (geslacht === "Vrouw") {
-            maxHartslag = 226 - leeftijd;
-        } else {
-            console.error("Ongeldig geslacht:", geslacht);
-            return;
-        }
-
-        let zone;
-        if (hartslag >= maxHartslag * 0.5 && hartslag < maxHartslag * 0.6) {
-            zone = 'Warming-up/Cooling-down';
-        } else if (hartslag >= (maxHartslag * 0.6) && hartslag < (maxHartslag * 0.7)) {
-            zone = 'Vetverbranding';
-        } else if (hartslag >= maxHartslag * 0.7 && hartslag < maxHartslag * 0.8) {
-            zone = 'Aerobe training';
-        } else if (hartslag >= maxHartslag * 0.8 && hartslag < maxHartslag * 0.9) {
-            zone = 'Anaerobe training';
-        } else if (hartslag >= maxHartslag * 0.9 && hartslag <= maxHartslag) {
-            zone = 'Maximale inspanning';
-        } else {
-            zone = 'Buiten bereik';
-        }
-
-        if (zone && timeInZones[zone] !== undefined) {
-            timeInZones[zone] += 5; // omdat er stapjes worden genomen van 5 seconden
-        }
-    });
-    let timeInMinutes = {};
-    for (let zone in timeInZones) {
-        timeInMinutes[zone] = (timeInZones[zone] / 60).toFixed(2);
-    }
-
-    console.log("Tijd in zones:", timeInMinutes);
-});
 
 
 // var mountain = d3.select("body")
@@ -384,181 +342,15 @@ Promise.all([
 
 // door dit aan te passen naar svg inplaats van mountain kan je de berg en sneeuw als achtergrond gebruiken voor de grafiek.
 // voor betere zichtbaarheid is het verstandig om de grafiek de zelfde afmetingen te geven als de berg.
-svg.append("polygon") // berg 
+hartslagGrafiek.append("polygon") // berg 
     .attr("points", "400,000 000,800 800,800")
     .attr("fill", "#8B4513")
 
-svg.append("polygon") // sneeuw 1
+hartslagGrafiek.append("polygon") // sneeuw 1
     .attr("points", "400,0 200,400 350,300 400,400") // top, links, midden, rechts
     .attr("fill", "#ffffff")
 
-svg.append("polygon") // sneeuw 2
+hartslagGrafiek.append("polygon") // sneeuw 2
     .attr("points", "400,0 600,400 450,300 400,400") // top, links, midden, rechts
     .attr("fill", "#ffffff")
-
-// d3.dsv(";", "data/sportData.csv").then(function(data) {
-//     // Voorbereiding
-//     let timeInZones = {
-//         'Warming-up/Cooling-down': 0,
-//         'Vetverbranding': 0,
-//         'Aerobe training': 0,
-//         'Anaerobe training': 0,
-//         'Maximale inspanning': 0
-//     };
-
-//     data.forEach(function(d) {
-//         const leeftijd = +d.Leeftijd; // Verander deze als de leeftijd niet in je dataset staat
-//         const geslacht = d.Geslacht;
-//         const hartslag = +d.HR;
-//         const tijd = +d["t (s)"]; // Neem aan dat de tijd in seconden is
-
-
-//         // Bereken de maximale hartslag
-//         let maxHartslag;
-//         if (geslacht === "Man") {
-//             maxHartslag = 220 - leeftijd;
-//         } else if (geslacht === "Vrouw") {
-//             maxHartslag = 226 - leeftijd;
-//         }
-
-//         // Bepaal de hartslagzone
-//         let zone;
-//         if (hartslag >= maxHartslag * 0.5 && hartslag < maxHartslag * 0.6) {
-//             zone = 'Warming-up/Cooling-down';
-//         } else if (hartslag >= maxHartslag * 0.6 && hartslag < maxHartslag * 0.7) {
-//             zone = 'Vetverbranding';
-//         } else if (hartslag >= maxHartslag * 0.7 && hartslag < maxHartslag * 0.8) {
-//             zone = 'Aerobe training';
-//         } else if (hartslag >= maxHartslag * 0.8 && hartslag < maxHartslag * 0.9) {
-//             zone = 'Anaerobe training';
-//         } else if (hartslag >= maxHartslag * 0.9 && hartslag <= maxHartslag) {
-//             zone = 'Maximale inspanning';
-//         }
-
-//         // Voeg de tijd toe aan de relevante zone
-//         if (zone) {
-//             timeInZones[zone] += tijd; // Tel de tijd op
-//         }
-//     });
-
-//     // Log of gebruik de tijd in zones
-//     console.log("Tijd in elke hartslagzone (in seconden):", timeInZones);
-
-//     // Omzetten naar minuten voor beter leesbaarheid (optioneel)
-//     for (let key in timeInZones) {
-//         timeInZones[key] = (timeInZones[key] / 60).toFixed(2); // Zet om naar minuten
-//     }
-
-//     console.log("Tijd in elke hartslagzone (in minuten):", timeInZones);
-
-//     // Hier kun je verder gaan om deze informatie te visualiseren, bijvoorbeeld met D3.js
-// });
-
-
-    
-
-    // let currentData = [];
-    // let previousData = [];  
-    // let isCurrentData = true; 
-    
-    // d3.dsv(";", "data/Sporter.csv").then(function(data) {
-    //     currentData = data;
-    //     loadData(currentData);
-    // }).catch(function(error) {
-    //     console.error('Error loading the current CSV file:', error);
-    // });
-    
-    // d3.dsv(";", "data/Sporter2.csv").then(function(data) {
-    //     previousData = data;
-    // }).catch(function(error) {
-    //     console.error('Error loading the previous CSV file:', error);
-    // });
-    
-    // function loadData(data) {
-    //     const container = d3.select(".sporterGegevens");
-    //     container.html("");
-    
-    //     data.forEach(function(row) {
-    //         container.append("p")
-    //             .html(`Voornaam: ${row.Voornaam}
-    //                    <br>Achternaam: ${row.Achternaam}
-    //                    <br>Leeftijd: ${row.Leeftijd}
-    //                    <br>Geslacht: ${row.Geslacht}
-    //                    <br>Lengte (cm): ${row["Lengte (cm)"]}
-    //                    <br>Gewicht (kg): ${row["Gewicht (kg)"]}
-    //                    <br>Testdatum: ${row["Test datum"]}`);
-    //     });
-    // }
-    
-    
-    // d3.select("#vorigeMeting").on("click", function() {
-    //     if (isCurrentData) {
-    //         if (previousData.length > 0) {
-    //             loadData(previousData);
-    //             d3.select("#vorigeMeting").text("Huidige meting");
-    //         } else {
-    //             alert("Geen gegevens voor de vorige meting gevonden.");
-    //         }
-    //     } else {
-    //         loadData(currentData);
-    //         d3.select("#vorigeMeting").text("Vorige meting");
-    //     }
-    //     isCurrentData = !isCurrentData; 
-    // });
-    
- 
-// const data = d3.csv("data/sportData.csv")
-//     .row(function(d) {
-//         return {
-//             voornaam: d.Voornaam,
-//             achternaam: d.Achternaam,
-//             leeftijd: d.Leeftijd
-//         };
-//     })
-//     .get(function(rows) {
-//         console.log(rows);
-//     });
-
-// d3.csv("data/sportData.csv", function(d) {
-//     return {
-//         voornaam: d.Voornaam,
-//         achternaam: d.Achternaam,
-//         leeftijd: +d.Leeftijd
-//     };
-// }, function(data) {
-//     console.log(data);
-// });
-
-// d3.csv("data/sportData.csv", function(data) {   
-//     d3.select(".sporterGegevens")
-//         .selectAll("p")
-//         .data(data)
-//         .enter()
-//         .append("p")
-//         .text(function(d) {
-//             return d.voornaam
-//         })
-// });
-
-
-// d3.csv("data/sportData.csv", function(data) {
-//     for (let i = 0; i < data.length; i++) {
-//         const sporter = data[i];
-        
-//         let voornaam = sporter.Voornaam;
-//         let achternaam = sporter.Achternaam;
-//         let leeftijd = sporter.Leeftijd;
-
-//         console.log(achternaam);
-//     }
-// });
-
-// d3.csv("data/sportData.csv", function(data) {
-//     console.log(data);
-// });
-
-// d3.dsv(";", "data/sportData.csv", function(data) {
-//     console.log(data);
-// });
-
 
