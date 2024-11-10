@@ -19,14 +19,14 @@ p-text {
 .hartslagGrafiek {
     max-height: 100%;
     width: auto;
-    grid-column: span 1;
+    grid-column: 1;
     
 }
 
 .belangrijkste-waarden-per-fase {
     height: auto;
     width: auto;
-    grid-column: span 1;
+    grid-column: 2;
 }
 
 .hartslag-zones {
@@ -34,6 +34,7 @@ p-text {
     width: auto;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
+    grid-column: 1;
     
 }
 
@@ -44,6 +45,7 @@ p-text {
     font-size: 20px;
     background-color: #3c5c79;
     text-align: center;
+    grid-column: 2;
 }
 
 .header-bar {

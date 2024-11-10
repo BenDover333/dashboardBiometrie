@@ -1,5 +1,22 @@
 d3.select("body")
     .append("div")
+    .attr("id", "tooltip")
+
+    d3.select("#tooltip")
+    .style("position", "absolute")
+    .style("background-color", "white")
+    .style("border", "1px solid black")
+    .style("padding", "5px")
+    .style("opacity", 0)
+    .style("pointer-events", "none")
+    .style("font-size", "16px")
+    .style("font-family", "Arial")
+    .style("border-radius", "5px")
+    .style("transition", "opacity 0.3s")
+    .style("z-index", 1000);
+
+d3.select("body")
+    .append("div")
     .attr("class", "background")
 
 d3.select(".background")
@@ -43,16 +60,22 @@ d3.select(".sporter-container")
     .style("flex", "1")
     .style("margin-left", "20px"); 
 
+d3.select(".header-bar")
+    .append("div")
+    .attr("class", "titel-container")
+    .style("text-align", "center")
+    .style("margin-top", "10px")
+    .style("margin-right", "120px")
+    .style("color", "#e97025")
+    .style("font-size", "50px")
+    .style("font-weight", "bold")
+    .style("font-family", "Arial")
+    .text("Weg naar de top");
 
 d3.select(".header-bar")
     .append("div")
     .attr("class", "logo-container")
     .style("align-items", "center");
-
-d3.select("header-bar")
-    .append("div")
-    .attr("class", "titel")
-    .text("Op weg naar de top")
 
 d3.select(".logo-container")
     .append("img")
@@ -62,24 +85,6 @@ d3.select(".logo-container")
     .style("margin-right", "100px");
 
 
-
-
-d3.select("body")
-    .append("div")
-    .attr("id", "tooltip")
-
-d3.select("#tooltip")
-    .style("position", "absolute")
-    .style("background-color", "white")
-    .style("border", "1px solid black")
-    .style("padding", "5px")
-    .style("opacity", 0)
-    .style("pointer-events", "none")
-    .style("font-size", "16px")
-    .style("font-family", "Arial")
-    .style("border-radius", "5px")
-    .style("transition", "opacity 0.3s")
-
 d3.select("body")
     .append("div")
     .attr("class", "graphs")
@@ -88,101 +93,80 @@ d3.select(".graphs")
     .append("div")
     .attr("class", "grafieken-container")
 
-
-
-
-d3.dsv(";", "data/Sporter.csv").then(function (data) {
-    var container = d3.select(".sporterGegevens")
-    var container2 = d3.select(".sporterGegevens2")
-
-    data.forEach(function (row) {
-        container.append("p")
-            .html(`Voornaam: ${row.Voornaam}
-                <br>Achternaam: ${row.Achternaam}
-                <br>Leeftijd: ${row.Leeftijd}
-                <br>Geslacht: ${row.Geslacht}`)
+    let datasets = [];
+    let currentIndex = 0;
+    
+    Promise.all([
+        d3.dsv(";", "data/Sporter.csv"),
+        d3.dsv(";", "data/Sporter2.csv")
+    ]).then(function (results) {
+        datasets = results;
+        loadData(currentIndex);
+    }).catch(function (error) {
+        console.error('Error loading CSV files:', error);
     });
-    data.forEach(function (d) {
-        container2.append("p")
-            .html(`
-                <br>Lengte (cm): ${d["Lengte (cm)"]}
-                <br>Gewicht (kg): ${d["Gewicht (kg)"]}
-                <br>Testdatum: ${d["Test datum"]}`)
-    });
-});
-
-async function loadSportData() {
-    d3.dsv(";", "data/sportData.csv").then(function (data) {
-        console.log("Test om te kijken of de data correct laad.");
-        data.forEach(function (d) {
-            console.log(d.HR);
-            console.log(d["t (s)"]);
+    
+    function loadData(index) {
+        const data = datasets[index];
+        if (!data) {
+            console.error("Geen data beschikbaar voor index:", index);
+            return;
+        }
+    
+        var container = d3.select(".sporterGegevens");
+        var container2 = d3.select(".sporterGegevens2");
+    
+        container.html('');
+        container2.html('');
+    
+        data.forEach(function (row) {
+            container.append("p")
+                .html(`Voornaam: ${row.Voornaam}
+                    <br>Achternaam: ${row.Achternaam}
+                    <br>Leeftijd: ${row.Leeftijd}
+                    <br>Geslacht: ${row.Geslacht}`);
         });
+        data.forEach(function (d) {
+            container2.append("p")
+                .html(` 
+                    <br>Lengte (cm): ${d["Lengte (cm)"]}
+                    <br>Gewicht (kg): ${d["Gewicht (kg)"]}
+                    <br>Testdatum: ${d["Test datum"]}`);
+        });
+    }
+    
+    d3.select("body")
+        .append("button")
+        .attr("id", "vorigeMeting")
+        .text("Vorige meting");
+    
+    d3.select("body")
+        .append("button")
+        .attr("id", "volgendeMeting")
+        .text("Volgende meting");
+    
+    console.log("Knoppen toegevoegd");
+    
+    d3.select("#vorigeMeting").on("click", function () {
+        console.log("Vorige meting geklikt");
+        if (currentIndex > 0) {
+            currentIndex--;
+            loadData(currentIndex);
+        } else {
+            alert("Er zijn geen eerdere metingen beschikbaar.");
+        }
     });
-};
-
-let datasets = [];
-let currentIndex = 0;
-
-Promise.all([
-    d3.dsv(";", "data/Sporter.csv"),
-    d3.dsv(";", "data/Sporter2.csv"),
-    //d3.dsv(";", "data/Sporter3.csv")
-]).then(function (results) {
-    datasets = results;
-    loadData(currentIndex);
-}).catch(function (error) {
-    console.error('Error loading CSV files:', error);
-});
-
-// function loadData(index) {
-//     const data = datasets[index];
-//     const container = d3.select(".sporterGegevens");
-//     container.html("");
-
-//     data.forEach(function (row) {
-//         container.append("p")
-//             .html(`Voornaam: ${row.Voornaam}
-//                        <br>Achternaam: ${row.Achternaam}
-//                        <br>Leeftijd: ${row.Leeftijd}
-//                        <br>Geslacht: ${row.Geslacht}
-//                        <br>Lengte (cm): ${row["Lengte (cm)"]}
-//                        <br>Gewicht (kg): ${row["Gewicht (kg)"]}
-//                        <br>Testdatum: ${row["Test datum"]}`);
-//     });
-// }
-
-d3.select("body")
-    .append("button")
-    .attr("id", "vorigeMeting")
-    .text("Vorige meting");
-
-d3.select("body")
-    .append("button")
-    .attr("id", "volgendeMeting")
-    .text("Volgende meting");
-
-d3.select("#vorigeMeting").on("click", function () {
-    if (currentIndex < datasets.length - 1) {
-        currentIndex++;
-        loadData(currentIndex);
-    } else {
-        alert("Er zijn geen eerdere metingen beschikbaar.");
-    }
-});
-
-d3.select("#volgendeMeting").on("click", function () {
-    if (currentIndex > 0) {
-        currentIndex--;
-        loadData(currentIndex);
-    } else {
-        alert("Er zijn geen verdere metingen beschikbaar.");
-    }
-});
-
-d3.select(".grafieken-conatiner")
-    .append("div")
-    .attr("class", "hartslagGrafiek")
+    
+    d3.select("#volgendeMeting").on("click", function () {
+        console.log("Volgende meting geklikt");
+        if (currentIndex < datasets.length - 1) {
+            currentIndex++;
+            loadData(currentIndex); 
+        } else {
+            alert("Er zijn geen latere metingen beschikbaar.");
+        }
+    });
+    
 
 var margin = { top: 70, right: 30, bottom: 60, left: 50 },
     width = 800 - margin.left - margin.right,
@@ -278,16 +262,16 @@ function loadHeartRateData() {
 
         hartslagGrafiek.append("path")
             .attr("d", "M474.655,74.503C449.169,45.72,413.943,29.87,375.467,29.87c-30.225,0-58.5,12.299-81.767,35.566 c-15.522,15.523-28.33,35.26-37.699,57.931c-9.371-22.671-22.177-42.407-37.699-57.931c-23.267-23.267-51.542-35.566-81.767-35.566 c-38.477,0-73.702,15.851-99.188,44.634C13.612,101.305,0,137.911,0,174.936c0,44.458,13.452,88.335,39.981,130.418 c21.009,33.324,50.227,65.585,86.845,95.889c62.046,51.348,123.114,78.995,125.683,80.146c2.203,0.988,4.779,0,6.981,0 c2.57-1.151,63.637-28.798,125.683-80.146c36.618-30.304,65.836-62.565,86.845-95.889C498.548,263.271,512,219.394,512,174.936 C512,137.911,498.388,101.305,474.655,74.503z")
-            .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.05)`) // Plaats en schaal het hart
+            .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.05)`)
             .attr("fill", "#FF6647")
             .transition()
             .duration(1000)
             .ease(d3.easeSin)
-            .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.06)`) // Kloppend effect: inzoomen
+            .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.06)`)
             .transition()
             .duration(1000)
-            .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.05)`) // Terug naar originele schaal
-            .on("end", function repeat() { // Herhaal de animatie
+            .attr("transform", `translate(${xPos - 20}, ${yPos - 10}) scale(0.05)`)
+            .on("end", function repeat() {
                 d3.select(this)
                     .transition()
                     .duration(1000)
@@ -324,24 +308,6 @@ let maleMax = 220 - age;
 let femaleMax = 226 - age;
 let zone = '';
 
-
-
-
-// var mountain = d3.select("body")
-//     .append("svg")
-//     .attr("width", 800)
-//     .attr("height", 800)
-//     .style("background-color", "#FFFFFF")
-
-// mountain.append("rect")
-//     .attr("x", 0)
-//     .attr("y", 0)
-//     .attr("width", 800)
-//     .attr("height", 800)
-//     .attr("fill", "#87CEEB")
-
-// door dit aan te passen naar svg inplaats van mountain kan je de berg en sneeuw als achtergrond gebruiken voor de grafiek.
-// voor betere zichtbaarheid is het verstandig om de grafiek de zelfde afmetingen te geven als de berg.
 hartslagGrafiek.append("polygon") // berg 
     .attr("points", "400,000 000,800 800,800")
     .attr("fill", "#8B4513")
@@ -353,4 +319,6 @@ hartslagGrafiek.append("polygon") // sneeuw 1
 hartslagGrafiek.append("polygon") // sneeuw 2
     .attr("points", "400,0 600,400 450,300 400,400") // top, links, midden, rechts
     .attr("fill", "#ffffff")
+
+    
 

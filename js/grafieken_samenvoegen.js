@@ -30,7 +30,11 @@ function createDoubleYAxisChart(data) {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        svg.append("text")
+    const tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+    svg.append("text")
         .attr("x", (width / 2))             
         .attr("y", 0 - (margin.top / 2))
         .attr("text-anchor", "middle")  
@@ -98,28 +102,80 @@ function createDoubleYAxisChart(data) {
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 2)
-        .attr("d", line.y(d => yLeft(d.gemiddeldeVO2)));
+        .attr("d", line.y(d => yLeft(d.gemiddeldeVO2)))
+        .on("mouseover", function(event, d) {
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+            tooltip.html(`Fase: ${d.fase}<br>VO2: ${d.gemiddeldeVO2}`)
+                .style("left", (event.pageX + 5) + "px")
+                .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function(d) {
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
 
     svg.append("path")
         .datum(data)
         .attr("fill", "none")
         .attr("stroke", "orange")
         .attr("stroke-width", 2)
-        .attr("d", line.y(d => yLeft(d.gemiddeldeVCO2)));
+        .attr("d", line.y(d => yLeft(d.gemiddeldeVCO2)))
+        .on("mouseover", function(event, d) {
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+            tooltip.html(`Fase: ${d.fase}<br>VCO2: ${d.gemiddeldeVCO2}`)
+                .style("left", (event.pageX + 5) + "px")
+                .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function(d) {
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
 
     svg.append("path")
         .datum(data)
         .attr("fill", "none")
         .attr("stroke", "green")
         .attr("stroke-width", 2)
-        .attr("d", line.y(d => yRight(d.gemiddeldeHR)));
+        .attr("d", line.y(d => yRight(d.gemiddeldeHR)))
+        .on("mouseover", function(event, d) {
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+            tooltip.html(`Fase: ${d.fase}<br>HR: ${d.gemiddeldeHR}`)
+                .style("left", (event.pageX + 5) + "px")
+                .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function(d) {
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
 
     svg.append("path")
         .datum(data)
         .attr("fill", "none")
         .attr("stroke", "purple")
         .attr("stroke-width", 2)
-        .attr("d", line.y(d => yRight(d.gemiddeldeVE)));
+        .attr("d", line.y(d => yRight(d.gemiddeldeVE)))
+        .on("mouseover", function(event, d) {
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+            tooltip.html(`Fase: ${d.fase}<br>VE: ${d.gemiddeldeVE}`)
+                .style("left", (event.pageX + 5) + "px")
+                .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function(d) {
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
 
     const legend = svg.append("g")
         .attr("transform", `translate(${width/5},70)`);
